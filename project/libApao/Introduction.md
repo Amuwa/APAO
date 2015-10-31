@@ -9,9 +9,8 @@ Version 0.1
 -----------
 
 
-Input: map from domain to objective value
-
-Output: procedure to get approximate optima
+* Input: map from domain to objective value
+* Output: procedure to get approximate optima
 
 
 ### Elements:
@@ -33,6 +32,8 @@ Output: procedure to get approximate optima
 
 #### Expresion Tree
 * Nodes
+* Basic functions
+* Expresion Interpitor
 * ...
 
 #### Tree Operations

@@ -1,0 +1,12 @@
+#!/bin/bash
+git add LICENSE
+git add *.md
+git add gitpush
+git add project/*
+git add project/libApao/*
+git commit -m "update"
+git push origin master
+
+
+
+

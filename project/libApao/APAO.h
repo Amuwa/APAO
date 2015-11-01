@@ -3,6 +3,7 @@
 
 #include "quantity.h"
 #include "operator.h"
+#include "expressionnode.h"
 
 
 class APAO

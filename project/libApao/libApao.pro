@@ -6,12 +6,14 @@ CONFIG -= qt
 SOURCES += main.cpp \
     APAO.cpp \
     quantity.cpp \
-    operator.cpp
+    operator.cpp \
+    expressionnode.cpp
 
 HEADERS += \
     APAO.h \
     quantity.h \
-    operator.h
+    operator.h \
+    expressionnode.h
 
 DISTFILES += \
     Introduction.md

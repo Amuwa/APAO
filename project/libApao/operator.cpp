@@ -67,6 +67,7 @@ Quantity Operator::evaluate(ParameterList paras){
 
 /////////////////////
 
+OP NullOP("NULLFUNC",&nullfunc); //Null Func
 
 
 vector<Operator*> AvailableOperators;
@@ -84,6 +85,19 @@ bool RegisterOp(string name, Func func){
     return true;
 }
 
+OP* GetOperator(string name){
+    OP* op = &NullOP;
+    int C= AvailableOperators.size();
+    for(int i=0;i<C;i++){
+        if(AvailableOperators.at(i)->isSameName(name)){
+            op = AvailableOperators.at(i);
+            return op;
+        }
+    }
+    cout<<"OPERATOR ["<<name<<"] not registered."<<endl;
+    return op;
+}
+
 Var Eval(string name, ParameterList paras){
     int C= AvailableOperators.size();
     for(int i=0;i<C;i++){
@@ -96,6 +110,94 @@ Var Eval(string name, ParameterList paras){
 
 #include <math.h>
 #include <stdlib.h>
+
+//
+Var PLUS(ParameterList paras){
+    int C = paras.size();
+    if(C<1){
+        string msg = "No value passed in (PLUS).";
+        Var err=msg;
+        return err;
+    }
+    double realpart =0.0;
+    double imgnpart = 0.0;
+    for(int i=0;i<C;i++){
+        if(paras.at(i).type == Var::Number || paras.at(i).type == Var::Complex){
+            realpart += paras.at(i).getComplexValue().realPart;
+            imgnpart += paras.at(i).getComplexValue().imaginaryPart;
+        }else{
+            string msg = "Non- Number/Complex value passed in (PLUS).";
+            Var err=msg;
+            return err;
+        }
+    }
+    if(imgnpart == 0){
+        Var rs = realpart;
+        return rs;
+    }else{
+        Var rs(realpart,imgnpart);
+        return rs;
+    }
+}
+
+Var MINUS(ParameterList paras){
+    int C = paras.size();
+    if(C<1){
+        string msg = "No value passed in (MINUS).";
+        Var err=msg;
+        return err;
+    }else if(C>2){
+        string msg = "More than two values passed in (MINUS).";
+        Var err=msg;
+        return err;
+    }
+    else if(C==1){
+        if(paras.at(0).type == Var::Number){
+            Var rs = -(paras.at(0).getNumberValue());
+            return rs;
+        }
+    }else{
+
+        if(paras.at(0).type == Var::Number || paras.at(0).type == Var::Complex){
+            if(paras.at(1).type == Var::Number || paras.at(1).type == Var::Complex){
+                double r = paras.at(0).getComplexValue().realPart - paras.at(1).getComplexValue().realPart;
+                double i = paras.at(0).getComplexValue().imaginaryPart - paras.at(1).getComplexValue().imaginaryPart;
+                if(i==0){
+                    Var rs = r;
+                    return rs;
+                }else{
+                    Var rs(r,i);
+                    return rs;
+                }
+            }
+        }
+
+        string msg = "Non- Number/Complex values passed in (MINUS).";
+        Var err=msg;
+        return err;
+    }
+}
+
+
+Var TIMES(ParameterList paras){
+    //
+}
+
+Var DIVIDEDBY(ParameterList paras){
+    //
+}
+
+Var POWER(ParameterList paras){
+    //
+}
+
+Var LOG(ParameterList paras){
+    //
+}
+
+Var SQRT(ParameterList paras){
+    //
+}
 
 Var SIN(ParameterList paras){
     if(paras.size()<1){

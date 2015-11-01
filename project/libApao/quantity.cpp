@@ -4,6 +4,7 @@ Quantity::Quantity(){
     type=Void;
     bValue = false;
     dValue = 0.0;
+    imaginaryValue=0.0;
 }
 
 Quantity::Quantity(bool bv)
@@ -18,6 +19,13 @@ Quantity::Quantity(double dv)
     type = Number;
     dValue = dv;
     bValue = false;
+}
+
+Quantity::Quantity(double dv, double iv){
+    type = Complex;
+    dValue =dv;
+    imaginaryValue = iv;
+    bValue =false;
 }
 
 void Quantity::operator=(bool bv){
@@ -38,6 +46,12 @@ bool Quantity::getBoolValue(){
 double Quantity::getNumberValue(){
     return dValue;
 }
+ComplexNumber Quantity::getComplexValue(){
+    ComplexNumber x;
+    x.realPart = dValue;
+    x.imaginaryPart = imaginaryValue;
+    return x;
+}
 
 void Quantity::operator =(char* msg){
     type=Error;
@@ -45,6 +59,7 @@ void Quantity::operator =(char* msg){
 
     bValue = false;
     dValue = 0.0;
+    imaginaryValue = 0.0;
 }
 void Quantity::operator =(string msg){
     type=Error;
@@ -52,6 +67,7 @@ void Quantity::operator =(string msg){
 
     bValue = false;
     dValue = 0.0;
+    imaginaryValue = 0.0;
 }
 Quantity::Quantity(string& msg){
     type=Error;
@@ -59,16 +75,9 @@ Quantity::Quantity(string& msg){
 
     bValue = false;
     dValue = 0.0;
+    imaginaryValue = 0.0;
 }
-/*
-Quantity::Quantity(char* msg){
-    type=Error;
-    errorMsg = msg;
 
-    bValue = false;
-    dValue = 0.0;
-}
-*/
 string Quantity::getErrorMsg(){
     return errorMsg;
 }
@@ -77,24 +86,28 @@ Quantity::Quantity(Quantity& v){
     type = v.type;
     bValue = v.bValue;
     dValue = v.dValue;
+    imaginaryValue = v.imaginaryValue;
     errorMsg = v.errorMsg;
 }
 Quantity::Quantity(const Quantity& v){
     type = v.type;
     bValue = v.bValue;
     dValue = v.dValue;
+    imaginaryValue = v.imaginaryValue;
     errorMsg = v.errorMsg;
 }
 void Quantity::operator =(Quantity& v){
     type = v.type;
     bValue = v.bValue;
     dValue = v.dValue;
+    imaginaryValue = v.imaginaryValue;
     errorMsg = v.errorMsg;
 }
 void Quantity::operator =(Quantity v){
     type = v.type;
     bValue = v.bValue;
     dValue = v.dValue;
+    imaginaryValue = v.imaginaryValue;
     errorMsg = v.errorMsg;
 }
 
@@ -109,8 +122,40 @@ void Quantity::show(){
         cout<<dValue<<endl;
     }else if(type == Error){
         cout<<"ERROR: "<<errorMsg<<endl;
-    }else {
+    }else if(type == Complex){
+        cout<<dValue;
+        if(imaginaryValue>=0){
+            cout<<"+";
+        }
+        cout<<imaginaryValue<<"i"<<endl;
+    }
+    else {
         cout<<"NULL Quantity"<<endl;
     }
 
+}
+
+ostream& operator << (ostream& output,Var& c){
+    if(c.getType() == Var::Bool){
+        if(c.getBoolValue()){
+            output<<"TRUE";
+        }else{
+            output<<"FALSE";
+        }
+    }else if(c.getType() == Var::Number){
+        output<<c.getNumberValue();
+    }else if(c.getType() == Var::Error){
+        output<<"ERROR: "<<c.getErrorMsg();
+    }else if(c.getType() == Var::Complex){
+        ComplexNumber cn = c.getComplexValue();
+        output<<cn.realPart<<"\t";
+        if(cn.imaginaryPart>=0){
+            output<<"+";
+        }
+        output<<cn.imaginaryPart<<"i";
+    }
+    else {
+        output<<"NULL Quantity";
+    }
+    return output;
 }

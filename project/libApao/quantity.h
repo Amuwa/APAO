@@ -25,7 +25,7 @@ public:
     Quantity();
     void operator=(bool bv);
     void operator=(double dv);
-    //void operator=(double dv, double iv);
+    void operator=(ComplexNumber cv);
 
     Type getType();
     bool getBoolValue();

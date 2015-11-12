@@ -6,6 +6,7 @@ ExpressionNode::ExpressionNode()
 {
     type = VARIABLE;
     theOp = &NullOP;
+    parent = NULL;
 }
 
 Var ExpressionNode::evaluate(){
@@ -25,8 +26,10 @@ Var ExpressionNode::evaluate(){
 void ExpressionNode::Clear(){
     children.clear();
 }
+
 void ExpressionNode::AddChild(ExpressionNode* child){
     children.push_back(child);
+    child->parent = this;
 }
 ExpressionNode* ExpressionNode::RemoveChild(ExpressionNode* child){
     int C= children.size();
@@ -40,6 +43,9 @@ ExpressionNode* ExpressionNode::RemoveChild(ExpressionNode* child){
     if(idx >= 0){
         children.erase(children.begin()+idx);
     }
+
+    child->parent=NULL;
+
     return child;
 }
 
@@ -47,7 +53,10 @@ ExpressionNode* ExpressionNode::AddNewChild(string funcname){
     ExpressionNode* xnode = new ExpressionNode();
     xnode->type = OPERATOR;
     xnode->theOp = GetOperator(funcname);
+
     children.push_back(xnode);
+    xnode->parent = this;
+
     return xnode;
 }
 
@@ -56,6 +65,18 @@ ExpressionNode* ExpressionNode::AddNewChild(double dv){
     xnode->type = VARIABLE;
     xnode->theVar = dv;
     children.push_back(xnode);
+    xnode->parent = this;
+    return xnode;
+}
+ExpressionNode* ExpressionNode::AddNewChild(double dv,double iv){
+    ExpressionNode* xnode = new ExpressionNode();
+    xnode->type = VARIABLE;
+    ComplexNumber cv;
+    cv.realPart=dv;
+    cv.imaginaryPart=iv;
+    xnode->theVar = cv;
+    children.push_back(xnode);
+    xnode->parent = this;
     return xnode;
 }
 ExpressionNode* ExpressionNode::AddNewChild(bool bv){
@@ -63,5 +84,6 @@ ExpressionNode* ExpressionNode::AddNewChild(bool bv){
     xnode->type = VARIABLE;
     xnode->theVar = bv;
     children.push_back(xnode);
+    xnode->parent = this;
     return xnode;
 }

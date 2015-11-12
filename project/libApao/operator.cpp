@@ -180,28 +180,68 @@ Var MINUS(ParameterList paras){
 
 
 Var TIMES(ParameterList paras){
-    //
+    int C = paras.size();
+    if(C<1){
+        string msg = "No values passed in (Times).";
+        Var err=msg;
+        return err;
+    }else if(C==1){
+        if(paras.at(0).type == Var::Number ||paras.at(0).type == Var::Complex){
+            return paras.at(0);
+        }else{
+            string msg = "Non Number/Complex values passed in (Times).";
+            Var err=msg;
+            return err;
+        }
+    }else{
+        //times
+        !!!!
+    }
 }
 
 Var DIVIDEDBY(ParameterList paras){
-    //
+    int C = paras.size();
+    if(C<2){
+        string msg = "Less than 2 values passed in (DividedBy).";
+        Var err=msg;
+        return err;
+    }else if(C>2){
+        string msg = "More than two values passed in (DividedBy).";
+        Var err=msg;
+        return err;
+    }else{
+        if(paras.at(0).type == Var::Number || paras.at(0).type == Var::Complex){
+            ComplexNumber cv =paras.at(1).getComplexValue(0);
+            if(paras.at(1).type == Var::Number || paras.at(1).type == Var::Complex){
+                ComplexNumber cvd = paras.at(1).getComplexValue();
+                if(cvd.realPart == 0.0 && cvd.imaginaryPart == 0.0){
+                    string msg = "Divided by Zero";
+                    Var err=msg;
+                    return err;
+                }else{
+                    //complex division!!!
+                    !!
+                }
+            }
+        }
+    }
 }
 
 Var POWER(ParameterList paras){
-    //
+    //x^y
 }
 
 Var LOG(ParameterList paras){
-    //
+    //log(x)
 }
 
 Var SQRT(ParameterList paras){
-    //
+    //sqrt (x)
 }
 
 Var SIN(ParameterList paras){
     if(paras.size()<1){
-        string msg = "SIN: no paras passed in.";
+        string msg = "SIN: no para passed in.";
         Var rs = msg;
         return rs;
     }

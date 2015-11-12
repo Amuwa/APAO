@@ -5,6 +5,7 @@ Quantity::Quantity(){
     bValue = false;
     dValue = 0.0;
     imaginaryValue=0.0;
+    errorMsg="";
 }
 
 Quantity::Quantity(bool bv)
@@ -12,6 +13,7 @@ Quantity::Quantity(bool bv)
     type = Bool;
     bValue = bv;
     dValue = 0.0;
+    errorMsg="";
 }
 
 Quantity::Quantity(double dv)
@@ -19,6 +21,7 @@ Quantity::Quantity(double dv)
     type = Number;
     dValue = dv;
     bValue = false;
+    errorMsg="";
 }
 
 Quantity::Quantity(double dv, double iv){
@@ -26,15 +29,27 @@ Quantity::Quantity(double dv, double iv){
     dValue =dv;
     imaginaryValue = iv;
     bValue =false;
+    errorMsg="";
 }
 
 void Quantity::operator=(bool bv){
     type = Bool;
     bValue = bv;
+    imaginaryValue=0;
+    errorMsg="";
 }
 void Quantity::operator=(double dv){
     type = Number;
     dValue = dv;
+    imaginaryValue=0;
+    errorMsg="";
+}
+void Quantity::operator=(ComplexNumber cv){
+    type = Complex;
+    dValue = cv.realPart;
+    imaginaryValue=cv.imaginaryPart;
+    bValue =false;
+    errorMsg="";
 }
 
 Quantity::Type Quantity::getType(){

@@ -12,6 +12,7 @@ class ExpressionNode
     OP* theOp;
     Var theVar;
     vector<ExpressionNode*> children;
+    ExpressionNode* parent;
 public:
     enum Type{VARIABLE, OPERATOR} type;
     ExpressionNode();
@@ -24,6 +25,7 @@ public:
 
     ExpressionNode* AddNewChild(string funcname);
     ExpressionNode* AddNewChild(double dv);
+    ExpressionNode* AddNewChild(double dv, double iv);// dv + iv * i;
     ExpressionNode* AddNewChild(bool bv);
 
 };

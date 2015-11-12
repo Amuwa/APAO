@@ -4,6 +4,7 @@ git add *.md
 git add gitpush
 git add project/*
 git add project/libApao/*
+git add project/documents/*
 git commit -m "update"
 git push origin master
 

@@ -118,6 +118,7 @@ void Quantity::operator =(Quantity& v){
     imaginaryValue = v.imaginaryValue;
     errorMsg = v.errorMsg;
 }
+
 void Quantity::operator =(Quantity v){
     type = v.type;
     bValue = v.bValue;

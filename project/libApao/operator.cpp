@@ -59,11 +59,18 @@ Operator::Operator(string opName, Func f){
 bool Operator::isSameName(string& fn){
     return (name == fn);
 }
+string Operator::getName(){
+    return name;
+}
+
 Quantity Operator::evaluate(ParameterList paras){
     return (*func)(paras);
 }
 
-
+ostream& operator << (ostream& output,Operator& o){
+    output<<o.name;
+    return output;
+}
 
 /////////////////////
 
@@ -195,7 +202,24 @@ Var TIMES(ParameterList paras){
         }
     }else{
         //times
-        !!!!
+        if(paras.at(0).type == Var::Number ||paras.at(0).type == Var::Complex){
+            if(paras.at(1).type == Var::Number ||paras.at(1).type == Var::Complex){
+                ComplexNumber c0=paras.at(0).getComplexValue();
+                ComplexNumber c1=paras.at(1).getComplexValue();
+                double realpart = c0.realPart*c1.realPart - c0.imaginaryPart*c1.imaginaryPart;
+                double imgpart = c0.realPart*c1.imaginaryPart + c1.realPart*c0.imaginaryPart;
+                Var rs(realpart,imgpart);
+                return rs;
+            }else{
+                string msg = "Non Number/Complex values passed in (Times).";
+                Var err=msg;
+                return err;
+            }
+        }else{
+            string msg = "Non Number/Complex values passed in (Times).";
+            Var err=msg;
+            return err;
+        }
     }
 }
 
@@ -205,13 +229,9 @@ Var DIVIDEDBY(ParameterList paras){
         string msg = "Less than 2 values passed in (DividedBy).";
         Var err=msg;
         return err;
-    }else if(C>2){
-        string msg = "More than two values passed in (DividedBy).";
-        Var err=msg;
-        return err;
-    }else{
+    }else{ // (C>=2) //>2 to allow more variables, but only the first two are involved, the rest vars can be move to other nodes in future operations
         if(paras.at(0).type == Var::Number || paras.at(0).type == Var::Complex){
-            ComplexNumber cv =paras.at(1).getComplexValue(0);
+            ComplexNumber cv =paras.at(0).getComplexValue();
             if(paras.at(1).type == Var::Number || paras.at(1).type == Var::Complex){
                 ComplexNumber cvd = paras.at(1).getComplexValue();
                 if(cvd.realPart == 0.0 && cvd.imaginaryPart == 0.0){
@@ -219,20 +239,71 @@ Var DIVIDEDBY(ParameterList paras){
                     Var err=msg;
                     return err;
                 }else{
-                    //complex division!!!
-                    !!
+
+                    if(paras.at(0).type == Var::Number && paras.at(1).type == Var::Number){
+                        Var rs = (paras.at(0).getNumberValue()/paras.at(1).getNumberValue());
+                        return rs;
+                    }else{
+                       //complex division!!!
+                        ComplexNumber cj_cvd=cvd;
+                        cj_cvd.realPart = cvd.realPart;
+                        cj_cvd.imaginaryPart = - cvd.imaginaryPart;
+                        double R = cvd.realPart*cvd.realPart + cvd.imaginaryPart*cvd.imaginaryPart;
+                        ComplexNumber over ;
+                        over.realPart = (cv.realPart*cj_cvd.realPart - cv.imaginaryPart*cj_cvd.imaginaryPart)/R;
+                        over.imaginaryPart = (cv.realPart*cj_cvd.imaginaryPart + cv.imaginaryPart*cj_cvd.realPart)/R;
+                        Var rs (over.realPart,over.imaginaryPart);
+                        return rs;
+                    }
                 }
             }
         }
     }
+    string msg = "Wrong values passed in (DividedBy).";
+    Var err=msg;
+    return err;
 }
 
 Var POWER(ParameterList paras){
     //x^y
+    int C = paras.size();
+    if(C<2){
+        string msg = "Less than 2 values passed in (Power).";
+        Var err=msg;
+        return err;
+    }else{
+        if(paras.at(0).type == Var::Number ){
+            if(paras.at(1).type == Var::Number){
+                double base = paras.at(0).getNumberValue();
+                double order = paras.at(1).getNumberValue();
+                Var rs = pow(base,order);
+                return rs;
+            }
+        }
+        string msg = "Non-number values passed in (Power).";
+        Var err=msg;
+        return err;
+    }
 }
 
 Var LOG(ParameterList paras){
     //log(x)
+    int C = paras.size();
+    if(C<1){
+        string msg = "No values passed in (Log).";
+        Var err=msg;
+        return err;
+    }else{
+        if(paras.at(0).type == Var::Number ){
+
+                double x = paras.at(0).getNumberValue();
+                Var rs = log(x);
+                return rs;
+        }
+        string msg = "Non-number values passed in (Log).";
+        Var err=msg;
+        return err;
+    }
 }
 
 Var SQRT(ParameterList paras){

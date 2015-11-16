@@ -45,6 +45,7 @@ public:
     void operator =(Quantity v);
 
     void show();
+    friend ostream& operator << (ostream& output,Quantity& c);
 
 };
 

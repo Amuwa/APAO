@@ -7,6 +7,53 @@ ExpressionNode::ExpressionNode()
     type = VARIABLE;
     theOp = &NullOP;
     parent = NULL;
+    theVar = NULLVar;
+}
+
+ExpressionNode::ExpressionNode(string funcname){
+    type = OPERATOR;
+    theOp = GetOperator(funcname);
+    theVar = NULLVar;
+    parent=NULL;
+    //cout<<funcname<<" node is created"<<endl;
+}
+ExpressionNode::ExpressionNode(double dv){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar = dv;
+}
+ExpressionNode::ExpressionNode(double dv, double iv){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+
+    ComplexNumber c;
+    c.realPart=dv;
+    c.imaginaryPart=iv;
+    theVar = c;
+}
+ExpressionNode::ExpressionNode(bool bv){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar = bv;
+}
+
+
+bool ExpressionNode::isRoot(){
+    return (parent==NULL);
+}
+
+int ExpressionNode::level(){
+    int rs =0;
+    ExpressionNode *p = this;
+    if(p->isRoot()){return rs;}
+    while(!p->isRoot()){
+        p = p->parent;
+        rs++;
+    }
+    return rs;
 }
 
 Var ExpressionNode::evaluate(){
@@ -87,3 +134,36 @@ ExpressionNode* ExpressionNode::AddNewChild(bool bv){
     xnode->parent = this;
     return xnode;
 }
+
+
+ostream& operator << (ostream& output,ExpressionNode& c){
+    int n = c.level();
+    //output<<"{"<<endl;
+    if(c.type==ExpressionNode::OPERATOR){
+        for(int i=0;i<n;i++){
+            output<<"  ";
+        }
+        output<<(*c.theOp);
+        output<<"["<<endl;
+
+        int k = c.children.size();
+
+        for(int i=0;i<k;i++){
+            output<<(*c.children[i]);
+        }
+
+        for(int i=0;i<n;i++){
+            output<<"  ";
+        }
+        output<<"]"<<endl;
+    }else if(c.type == ExpressionNode::VARIABLE){
+        for(int i=0;i<n;i++){
+            output<<"  ";
+        }
+        output<<c.theVar;
+        output<<endl;
+    }
+    //output<<"}"<<endl;
+    return output;
+}
+

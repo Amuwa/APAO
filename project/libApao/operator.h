@@ -28,8 +28,11 @@ public:
     Operator(string opName, Func f);
     Quantity evaluate(ParameterList paras);
     bool isSameName(string &fn);
-
+    string getName();
+    friend ostream& operator << (ostream& output,Operator& o);
 };
+
+ostream& operator << (ostream& output,Operator& o);
 
 typedef Operator OP;
 
@@ -47,6 +50,7 @@ Var POWER(ParameterList paras);
 Var LOG(ParameterList paras);
 Var SIN(ParameterList paras);
 Var SQRT(ParameterList paras);
+Var Norm(ParameterList paras);//Norm/Abstrct
 
 Var MAX(ParameterList paras);
 Var MIN(ParameterList paras);

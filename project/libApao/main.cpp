@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Hello APAO" << endl;
+    cout << "============================================\n\t\t Library APAO\n\t(c) 2015 MengChang WANG\n============================================\n" << endl;
 
 
     Var cc (2.718);
@@ -24,25 +24,40 @@ int main()
     RegisterOp("pow", &POWER);
     RegisterOp("log", &LOG);
 
-    //cout<<"\t"<<cc<<endl;
-    //cout<<"/\t"<<dd<<endl;
-    //cout<<"------------------------"<<endl;
+    RegisterOp(">", &GreaterThan);
+    RegisterOp("==", &EqualTo);
+    RegisterOp("<", &LessThan);
+    RegisterOp(">=", &GreaterEqual);
+    RegisterOp("<=", &LessEqual);
+    RegisterOp("&&", &AND);
+    RegisterOp("!", &NOT);
+    RegisterOp("||", &OR);
 
-    //Var rs=Eval("log",list);
-    //cout<<"\t"<<rs<<endl;
+    ExpressionNode root(string("IF-THEN-ELSE"));
+    ExpressionNode Eq(string(">="));
 
-    //string fn="log";
-    ExpressionNode root(string("pow"));
     ExpressionNode div(string("div"));
-    root.AddNewChild(2.710);
-    div.AddNewChild(3.0);
+
+    ExpressionNode add(string("plus"));
+    add.AddNewChild(4.1);
+    add.AddNewChild(3.0);
+
+    div.AddChild(&add);
     div.AddNewChild(2.0);
-    root.AddChild(&div);
+
+    Eq.AddNewChild(3.5);
+    Eq.AddChild(&div);
+
+    root.AddChild(&Eq);
+    root.AddNewChild(5.0);
+    root.AddNewChild(20.0);
 
     cout<<root<<endl;
 
     Var x=root.evaluate();
     cout<<x<<endl;
+
+    cout<<endl;
 
     return 0;
 }

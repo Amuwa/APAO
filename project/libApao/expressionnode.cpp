@@ -141,10 +141,10 @@ ostream& operator << (ostream& output,ExpressionNode& c){
     //output<<"{"<<endl;
     if(c.type==ExpressionNode::OPERATOR){
         for(int i=0;i<n;i++){
-            output<<"  ";
+            output<<"    ";
         }
         output<<(*c.theOp);
-        output<<"["<<endl;
+        output<<":"<<endl;
 
         int k = c.children.size();
 
@@ -152,13 +152,16 @@ ostream& operator << (ostream& output,ExpressionNode& c){
             output<<(*c.children[i]);
         }
 
+        /*
         for(int i=0;i<n;i++){
             output<<"  ";
         }
-        output<<"]"<<endl;
+        output<<"}"<<endl;
+        */
+
     }else if(c.type == ExpressionNode::VARIABLE){
         for(int i=0;i<n;i++){
-            output<<"  ";
+            output<<"    ";
         }
         output<<c.theVar;
         output<<endl;

@@ -72,4 +72,7 @@ Var E(ParameterList paras);//e
 Var PI(ParameterList paras);//PI
 Var I(ParameterList paras);//i
 
+//
+
+
 #endif // OPERATOR_H

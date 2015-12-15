@@ -64,6 +64,9 @@ double Quantity::getNumberValue(){
 ComplexNumber Quantity::getComplexValue(){
     ComplexNumber x;
     x.realPart = dValue;
+
+    if(type == Number){imaginaryValue=0.0;}
+
     x.imaginaryPart = imaginaryValue;
     return x;
 }

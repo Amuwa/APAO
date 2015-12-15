@@ -23,7 +23,7 @@ Quantity if_then_else(ParameterList paras){
                 return nullQuantity;
             }
         }
-    }else if(paras.size() == 3){
+    }else if(paras.size() >= 3){
         Quantity cond = paras.at(0);
         Quantity body = paras.at(1);
         Quantity body2 = paras.at(2);
@@ -37,10 +37,6 @@ Quantity if_then_else(ParameterList paras){
                 return body2;
             }
         }
-    }else{
-        string errmsg = "IF-ELSE-THEN Error: more than 3 parameters.";
-        Quantity rs(errmsg);
-        return rs;
     }
 }
 
@@ -169,6 +165,8 @@ Var MINUS(ParameterList paras){
             if(paras.at(1).type == Var::Number || paras.at(1).type == Var::Complex){
                 double r = paras.at(0).getComplexValue().realPart - paras.at(1).getComplexValue().realPart;
                 double i = paras.at(0).getComplexValue().imaginaryPart - paras.at(1).getComplexValue().imaginaryPart;
+                if(fabs(i) < 1.0e-99){i=0;}
+
                 if(i==0){
                     Var rs = r;
                     return rs;
@@ -308,7 +306,75 @@ Var LOG(ParameterList paras){
 
 Var SQRT(ParameterList paras){
     //sqrt (x)
+    int C= paras.size();
+    if(C<1){
+        string msg = "No values passed in (Sqrt).";
+        Var err=msg;
+        return err;
+    }else{
+        if(paras.at(0).type == Var::Number ){
+
+                double x = paras.at(0).getNumberValue();
+                if(x>=0.0){
+                    Var rs = sqrt(x);
+                    return rs;
+                }else{
+                    x= -x;
+                    double root = sqrt(x);
+                    Var rs(0,root);
+                    return rs;
+                }
+        }else if(paras.at(0).type == Var::Complex){
+            //a formula is given at
+            //http://math.stackexchange.com/questions/44406/how-do-i-get-the-square-root-of-a-complex-number
+            // sqrt(z) = sqrt(r)[z + r] / |z+r|, where r = |z|
+            ComplexNumber cv = paras.at(0).getComplexValue();
+            double r = sqrt(cv.realPart*cv.realPart + cv.imaginaryPart*cv.imaginaryPart);
+            double sqrtR = sqrt(r);
+
+            ComplexNumber rv;
+            rv.realPart = cv.realPart + r;
+            rv.imaginaryPart = cv.imaginaryPart;
+
+            double m = sqrt(rv.realPart*rv.realPart + rv.imaginaryPart*rv.imaginaryPart);
+
+            rv.realPart *= (sqrtR/m);
+            rv.imaginaryPart*= (sqrtR/m);
+
+            Var rs(rv.realPart,rv.imaginaryPart);
+            return rs;
+        }
+        string msg = "Non-number values passed in (Sqrt).";
+        Var err=msg;
+        return err;
+    }
 }
+
+Var Norm(ParameterList paras){
+    //|x|
+    int C= paras.size();
+    if(C<1){
+        string msg = "No values passed in (Sqrt).";
+        Var err=msg;
+        return err;
+    }else{
+        if(paras.at(0).type == Var::Number ){
+            double x = paras.at(0).getNumberValue();
+            if(x<0.0){x=-x;}
+            Var rs = x;
+            return rs;
+        }else if(paras.at(0).type == Var::Complex){
+            ComplexNumber cv = paras.at(0).getComplexValue();
+            double x = sqrt(cv.realPart*cv.realPart + cv.imaginaryPart*cv.imaginaryPart);
+            Var rs = x;
+            return rs;
+        }
+        string msg = "Non-number values passed in (Norm).";
+        Var err=msg;
+        return err;
+    }
+}
+
 
 Var SIN(ParameterList paras){
     if(paras.size()<1){
@@ -332,3 +398,233 @@ Var IDENTICAL(ParameterList paras){
     }
     return paras.at(0);
 }
+
+
+Var MAX(ParameterList paras){
+    if(paras.size()<1){
+        string msg = "Max: no paras passed in.";
+        Var rs = msg;
+        return rs;
+    }
+
+    int C= paras.size();
+    double Infinitesimal =  -9.99e190;
+    double rs = Infinitesimal;
+    for(int i=0;i<C;i++){
+        if(paras.at(i).type == Var::Number){
+            double v = paras.at(i).getNumberValue();
+            if(v>rs){
+                rs = v;
+            }
+        }
+    }
+    if(rs > Infinitesimal){
+        Var vr = rs;
+        return vr;
+    }else{
+        string msg = "Max: no number is passed in.";
+        Var vrs = msg;
+        return vrs;
+    }
+}
+
+
+
+Var MIN(ParameterList paras){
+    if(paras.size()<1){
+        string msg = "Min: no paras passed in.";
+        Var rs = msg;
+        return rs;
+    }
+
+    int C= paras.size();
+    double Large =  9.99e190;
+    double rs = Large;
+    for(int i=0;i<C;i++){
+        if(paras.at(i).type == Var::Number){
+            double v = paras.at(i).getNumberValue();
+            if(v<rs){
+                rs = v;
+            }
+        }
+    }
+    if(rs < Large){
+        Var vr = rs;
+        return vr;
+    }else{
+        string msg = "Min: no number is passed in.";
+        Var vrs = msg;
+        return vrs;
+    }
+}
+
+
+//comp
+Var EqualTo(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "EqalTo: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }else{
+        if(paras.at(0).type != paras.at(1).type){
+            Var rs(false);
+            return rs;
+        }else{
+            if(paras.at(0).type == Var::Bool){
+                bool va = paras.at(0).getBoolValue();
+                bool vb = paras.at(1).getBoolValue();
+                Var rs(va&&vb);
+                return rs;
+            }else if(paras.at(0).type == Var::Complex || paras.at(0).type == Var::Number){
+                ComplexNumber va = paras.at(0).getComplexValue();
+                ComplexNumber vb = paras.at(1).getComplexValue();
+                Var rs ( (va.realPart==vb.realPart) && (va.imaginaryPart == vb.imaginaryPart)   );
+                return rs;
+            }
+        }
+        string msg = "EqalTo: type mismatches or error occurs.";
+        Var rs = msg;
+        return rs;
+    }
+}
+
+
+Var GreaterThan(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "GreaterThan: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }else{
+        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+                double va = paras.at(0).getNumberValue();
+                double vb = paras.at(1).getNumberValue();
+                Var rs(va>vb);
+                return rs;
+         }
+
+        string msg = "GreaterThan: type mismatches or error occurs.";
+        Var rs = msg;
+        return rs;
+    }
+}
+Var LessThan(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "LessThan: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }else{
+        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+                double va = paras.at(0).getNumberValue();
+                double vb = paras.at(1).getNumberValue();
+                Var rs(va<vb);
+                return rs;
+         }
+
+        string msg = "LessThan: type mismatches or error occurs.";
+        Var rs = msg;
+        return rs;
+    }
+}
+
+Var GreaterEqual(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "GreaterEqual: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }else{
+        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+                double va = paras.at(0).getNumberValue();
+                double vb = paras.at(1).getNumberValue();
+                Var rs(va>=vb);
+                return rs;
+         }
+
+        string msg = "GreaterEqual: type mismatches or error occurs.";
+        Var rs = msg;
+        return rs;
+    }
+}
+Var LessEqual(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "LessEqual: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }else{
+        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+                double va = paras.at(0).getNumberValue();
+                double vb = paras.at(1).getNumberValue();
+                Var rs(va <= vb);
+                return rs;
+         }
+
+        string msg = "LessEqual: type mismatches or error occurs.";
+        Var rs = msg;
+        return rs;
+    }
+}
+
+
+
+Var NOT(ParameterList paras){
+    int C = paras.size();
+    if(C<1){
+        string msg = "Not: no para passed in.";
+        Var rs = msg;
+        return rs;
+    }
+
+    if(paras.at(0).type == Var::Bool){
+            bool bv = paras.at(0).getNumberValue();
+            Var rs(!bv);
+            return rs;
+     }
+
+    string msg = "Not: type mismatches.";
+    Var rs = msg;
+    return rs;
+}
+
+Var AND(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "AND: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }
+
+    if(paras.at(0).type == Var::Bool && paras.at(1).type == Var::Bool){
+            bool va = paras.at(0).getNumberValue();
+            bool vb = paras.at(1).getNumberValue();
+            Var rs(va && vb);
+            return rs;
+     }
+
+    string msg = "AND: type mismatches.";
+    Var rs = msg;
+    return rs;
+}
+Var OR(ParameterList paras){
+    int C = paras.size();
+    if(C<2){
+        string msg = "OR: less than two paras passed in.";
+        Var rs = msg;
+        return rs;
+    }
+
+    if(paras.at(0).type == Var::Bool && paras.at(1).type == Var::Bool){
+            bool va = paras.at(0).getNumberValue();
+            bool vb = paras.at(1).getNumberValue();
+            Var rs(va || vb);
+            return rs;
+     }
+
+    string msg = "OR: type mismatches.";
+    Var rs = msg;
+    return rs;
+}
+

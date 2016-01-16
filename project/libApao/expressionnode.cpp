@@ -40,6 +40,44 @@ ExpressionNode::ExpressionNode(bool bv){
     theVar = bv;
 }
 
+void ExpressionNode::operator=(string funcname){
+    type = OPERATOR;
+    theOp = GetOperator(funcname);
+    theVar = NULLVar;
+    parent=NULL;
+}
+void ExpressionNode::operator=(double dv){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar = dv;
+}
+void ExpressionNode::operator=(bool bv){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar = bv;
+}
+void ExpressionNode::operator=(ComplexNumber cv){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar = cv;
+}
+
+void ExpressionNode::setAsIndexer(ParameterList* lst, int idx){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar.setAsIndexer(lst,idx);
+}
+
+void ExpressionNode::operator=(Var v){
+    type = VARIABLE;
+    theOp = &NullOP;
+    parent = NULL;
+    theVar=v;
+}
 
 bool ExpressionNode::isRoot(){
     return (parent==NULL);
@@ -130,6 +168,16 @@ ExpressionNode* ExpressionNode::AddNewChild(bool bv){
     ExpressionNode* xnode = new ExpressionNode();
     xnode->type = VARIABLE;
     xnode->theVar = bv;
+    children.push_back(xnode);
+    xnode->parent = this;
+    return xnode;
+}
+
+
+ExpressionNode* ExpressionNode::AddNewChild(ParameterList* Lst, int idx){
+    ExpressionNode* xnode = new ExpressionNode();
+    xnode->type = VARIABLE;
+    xnode->theVar.setAsIndexer(Lst,idx);
     children.push_back(xnode);
     xnode->parent = this;
     return xnode;

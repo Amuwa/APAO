@@ -7,13 +7,15 @@ SOURCES += main.cpp \
     APAO.cpp \
     quantity.cpp \
     operator.cpp \
-    expressionnode.cpp
+    expressionnode.cpp \
+    function.cpp
 
 HEADERS += \
     APAO.h \
     quantity.h \
     operator.h \
-    expressionnode.h
+    expressionnode.h \
+    function.h
 
 DISTFILES += \
     Introduction.md

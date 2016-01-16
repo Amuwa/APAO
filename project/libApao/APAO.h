@@ -4,7 +4,7 @@
 #include "quantity.h"
 #include "operator.h"
 #include "expressionnode.h"
-
+#include "function.h"
 
 class APAO
 {

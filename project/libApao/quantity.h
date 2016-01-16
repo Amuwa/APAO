@@ -2,6 +2,7 @@
 #define QUANTITY_H
 #include <string>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -17,11 +18,17 @@ class Quantity
 
     bool bValue;
     string errorMsg;
+
+    //for indexer
+    vector<Quantity>* theArray;
+    int theIdx;
+
 public:
-    enum Type {Bool, Number, Complex,Void, Error} type;
+    enum Type {Bool, Number, Complex,Void, Indexer, Error} type;
     Quantity(bool bv);
     Quantity(double dv);
     Quantity(double dv, double iv);
+    Quantity(vector<Quantity>* alist, int idx);
     Quantity();
     void operator=(bool bv);
     void operator=(double dv);
@@ -43,6 +50,8 @@ public:
 
     void operator =(Quantity& v);
     void operator =(Quantity v);
+
+    void setAsIndexer (vector<Quantity>* alist, int idx);
 
     void show();
     friend ostream& operator << (ostream& output,Quantity& c);

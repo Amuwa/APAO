@@ -33,6 +33,22 @@ int main()
     RegisterOp("!", &NOT);
     RegisterOp("||", &OR);
 
+
+    Var idx(&list,0);
+
+
+
+    cout<<"idx:  ";
+    cout<<idx;
+    cout<<endl;
+
+    list.at(0) = 3.718;
+
+    cout<<"idx:  ";
+    cout<<idx;
+    cout<<endl;
+
+
     ExpressionNode root(string("IF-THEN-ELSE"));
     ExpressionNode Eq(string(">="));
 

@@ -5,7 +5,7 @@ git add gitpush
 git add project/*
 git add project/libApao/*
 git add project/documents/*
-git commit -m "more basic expression nodes"
+git commit -m "Indexer (pointer variable pointing to other variable)"
 git push origin master
 
 

@@ -21,6 +21,12 @@ public:
     ExpressionNode(double dv, double iv);
     ExpressionNode(bool bv);
 
+    void operator=(string funcname);
+    void operator=(double dv);
+    void operator=(bool bv);
+    void operator=(ComplexNumber cv);
+    void setAsIndexer(ParameterList* lst, int idx);
+    void operator=(Var v);
 
     Var evaluate();
 
@@ -36,10 +42,11 @@ public:
     void AddChild(ExpressionNode* child);
     ExpressionNode* RemoveChild(ExpressionNode* child);
 
-    ExpressionNode* AddNewChild(string funcname);       //add a function node
-    ExpressionNode* AddNewChild(double dv);             //add a number variable node
-    ExpressionNode* AddNewChild(double dv, double iv);  //add a complex number variable node: dv + iv * i;
-    ExpressionNode* AddNewChild(bool bv);               //add a bool variable node
+    ExpressionNode* AddNewChild(string opfuncname);             //add a function/operator node (Not the "Function")
+    ExpressionNode* AddNewChild(double dv);                   //add a number variable node
+    ExpressionNode* AddNewChild(double dv, double iv);         //add a complex number variable node: dv + iv * i;
+    ExpressionNode* AddNewChild(bool bv);                      //add a bool variable node
+    ExpressionNode* AddNewChild(ParameterList* Lst, int idx);   //add a Indexer variable node
 
     //
     void exchangePositions(int idx0,int idx1);          //exchange the positions of two children at idx0-th and idx1-th positions

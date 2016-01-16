@@ -1,6 +1,6 @@
 #include "operator.h"
 
-Quantity nullfunc(ParameterList paras){
+Quantity nulloperator(ParameterList paras){
     paras.size();//to avoid warning
     return nullQuantity;
 }
@@ -44,10 +44,10 @@ Quantity if_then_else(ParameterList paras){
 Operator::Operator()
 {
     name = "NULL";
-    func = &nullfunc;
+    func = &nulloperator;
 }
 
-Operator::Operator(string opName, Func f){
+Operator::Operator(string opName, OpFunc f){
     name = opName;
     func = f;
 }
@@ -70,12 +70,12 @@ ostream& operator << (ostream& output,Operator& o){
 
 /////////////////////
 
-OP NullOP("NULLFUNC",&nullfunc); //Null Func
+OP NullOP("NULLOP",&nulloperator); //Null Operator
 
 
 vector<Operator*> AvailableOperators;
 
-bool RegisterOp(string name, Func func){
+bool RegisterOp(string name, OpFunc func){
     int C= AvailableOperators.size();
     for(int i=0;i<C;i++){
         if(AvailableOperators.at(i)->isSameName(name)){
@@ -125,7 +125,7 @@ Var PLUS(ParameterList paras){
     double realpart =0.0;
     double imgnpart = 0.0;
     for(int i=0;i<C;i++){
-        if(paras.at(i).type == Var::Number || paras.at(i).type == Var::Complex){
+        if(paras.at(i).getType()== Var::Number || paras.at(i).getType() == Var::Complex){
             realpart += paras.at(i).getComplexValue().realPart;
             imgnpart += paras.at(i).getComplexValue().imaginaryPart;
         }else{
@@ -155,14 +155,14 @@ Var MINUS(ParameterList paras){
         return err;
     }
     else if(C==1){
-        if(paras.at(0).type == Var::Number){
+        if(paras.at(0).getType() == Var::Number){
             Var rs = -(paras.at(0).getNumberValue());
             return rs;
         }
     }else{
 
-        if(paras.at(0).type == Var::Number || paras.at(0).type == Var::Complex){
-            if(paras.at(1).type == Var::Number || paras.at(1).type == Var::Complex){
+        if(paras.at(0).getType() == Var::Number || paras.at(0).getType() == Var::Complex){
+            if(paras.at(1).getType() == Var::Number || paras.at(1).getType() == Var::Complex){
                 double r = paras.at(0).getComplexValue().realPart - paras.at(1).getComplexValue().realPart;
                 double i = paras.at(0).getComplexValue().imaginaryPart - paras.at(1).getComplexValue().imaginaryPart;
                 if(fabs(i) < 1.0e-99){i=0;}
@@ -191,7 +191,7 @@ Var TIMES(ParameterList paras){
         Var err=msg;
         return err;
     }else if(C==1){
-        if(paras.at(0).type == Var::Number ||paras.at(0).type == Var::Complex){
+        if(paras.at(0).getType() == Var::Number ||paras.at(0).getType() == Var::Complex){
             return paras.at(0);
         }else{
             string msg = "Non Number/Complex values passed in (Times).";
@@ -200,8 +200,8 @@ Var TIMES(ParameterList paras){
         }
     }else{
         //times
-        if(paras.at(0).type == Var::Number ||paras.at(0).type == Var::Complex){
-            if(paras.at(1).type == Var::Number ||paras.at(1).type == Var::Complex){
+        if(paras.at(0).getType() == Var::Number ||paras.at(0).getType() == Var::Complex){
+            if(paras.at(1).getType() == Var::Number ||paras.at(1).getType() == Var::Complex){
                 ComplexNumber c0=paras.at(0).getComplexValue();
                 ComplexNumber c1=paras.at(1).getComplexValue();
                 double realpart = c0.realPart*c1.realPart - c0.imaginaryPart*c1.imaginaryPart;
@@ -228,9 +228,9 @@ Var DIVIDEDBY(ParameterList paras){
         Var err=msg;
         return err;
     }else{ // (C>=2) //>2 to allow more variables, but only the first two are involved, the rest vars can be move to other nodes in future operations
-        if(paras.at(0).type == Var::Number || paras.at(0).type == Var::Complex){
+        if(paras.at(0).getType() == Var::Number || paras.at(0).getType() == Var::Complex){
             ComplexNumber cv =paras.at(0).getComplexValue();
-            if(paras.at(1).type == Var::Number || paras.at(1).type == Var::Complex){
+            if(paras.at(1).getType() == Var::Number || paras.at(1).getType() == Var::Complex){
                 ComplexNumber cvd = paras.at(1).getComplexValue();
                 if(cvd.realPart == 0.0 && cvd.imaginaryPart == 0.0){
                     string msg = "Divided by Zero";
@@ -238,7 +238,7 @@ Var DIVIDEDBY(ParameterList paras){
                     return err;
                 }else{
 
-                    if(paras.at(0).type == Var::Number && paras.at(1).type == Var::Number){
+                    if(paras.at(0).getType() == Var::Number && paras.at(1).getType() == Var::Number){
                         Var rs = (paras.at(0).getNumberValue()/paras.at(1).getNumberValue());
                         return rs;
                     }else{
@@ -270,8 +270,8 @@ Var POWER(ParameterList paras){
         Var err=msg;
         return err;
     }else{
-        if(paras.at(0).type == Var::Number ){
-            if(paras.at(1).type == Var::Number){
+        if(paras.at(0).getType() == Var::Number ){
+            if(paras.at(1).getType() == Var::Number){
                 double base = paras.at(0).getNumberValue();
                 double order = paras.at(1).getNumberValue();
                 Var rs = pow(base,order);
@@ -292,7 +292,7 @@ Var LOG(ParameterList paras){
         Var err=msg;
         return err;
     }else{
-        if(paras.at(0).type == Var::Number ){
+        if(paras.at(0).getType() == Var::Number ){
 
                 double x = paras.at(0).getNumberValue();
                 Var rs = log(x);
@@ -312,7 +312,7 @@ Var SQRT(ParameterList paras){
         Var err=msg;
         return err;
     }else{
-        if(paras.at(0).type == Var::Number ){
+        if(paras.at(0).getType() == Var::Number ){
 
                 double x = paras.at(0).getNumberValue();
                 if(x>=0.0){
@@ -324,7 +324,7 @@ Var SQRT(ParameterList paras){
                     Var rs(0,root);
                     return rs;
                 }
-        }else if(paras.at(0).type == Var::Complex){
+        }else if(paras.at(0).getType() == Var::Complex){
             //a formula is given at
             //http://math.stackexchange.com/questions/44406/how-do-i-get-the-square-root-of-a-complex-number
             // sqrt(z) = sqrt(r)[z + r] / |z+r|, where r = |z|
@@ -358,12 +358,12 @@ Var Norm(ParameterList paras){
         Var err=msg;
         return err;
     }else{
-        if(paras.at(0).type == Var::Number ){
+        if(paras.at(0).getType() == Var::Number ){
             double x = paras.at(0).getNumberValue();
             if(x<0.0){x=-x;}
             Var rs = x;
             return rs;
-        }else if(paras.at(0).type == Var::Complex){
+        }else if(paras.at(0).getType() == Var::Complex){
             ComplexNumber cv = paras.at(0).getComplexValue();
             double x = sqrt(cv.realPart*cv.realPart + cv.imaginaryPart*cv.imaginaryPart);
             Var rs = x;
@@ -411,7 +411,7 @@ Var MAX(ParameterList paras){
     double Infinitesimal =  -9.99e190;
     double rs = Infinitesimal;
     for(int i=0;i<C;i++){
-        if(paras.at(i).type == Var::Number){
+        if(paras.at(i).getType() == Var::Number){
             double v = paras.at(i).getNumberValue();
             if(v>rs){
                 rs = v;
@@ -441,7 +441,7 @@ Var MIN(ParameterList paras){
     double Large =  9.99e190;
     double rs = Large;
     for(int i=0;i<C;i++){
-        if(paras.at(i).type == Var::Number){
+        if(paras.at(i).getType() == Var::Number){
             double v = paras.at(i).getNumberValue();
             if(v<rs){
                 rs = v;
@@ -467,16 +467,16 @@ Var EqualTo(ParameterList paras){
         Var rs = msg;
         return rs;
     }else{
-        if(paras.at(0).type != paras.at(1).type){
+        if(paras.at(0).getType() != paras.at(1).getType()){
             Var rs(false);
             return rs;
         }else{
-            if(paras.at(0).type == Var::Bool){
+            if(paras.at(0).getType() == Var::Bool){
                 bool va = paras.at(0).getBoolValue();
                 bool vb = paras.at(1).getBoolValue();
                 Var rs(va&&vb);
                 return rs;
-            }else if(paras.at(0).type == Var::Complex || paras.at(0).type == Var::Number){
+            }else if(paras.at(0).getType() == Var::Complex || paras.at(0).getType() == Var::Number){
                 ComplexNumber va = paras.at(0).getComplexValue();
                 ComplexNumber vb = paras.at(1).getComplexValue();
                 Var rs ( (va.realPart==vb.realPart) && (va.imaginaryPart == vb.imaginaryPart)   );
@@ -497,7 +497,7 @@ Var GreaterThan(ParameterList paras){
         Var rs = msg;
         return rs;
     }else{
-        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+        if(paras.at(0).getType() == paras.at(1).getType() && paras.at(0).getType() == Var::Number){
                 double va = paras.at(0).getNumberValue();
                 double vb = paras.at(1).getNumberValue();
                 Var rs(va>vb);
@@ -516,7 +516,7 @@ Var LessThan(ParameterList paras){
         Var rs = msg;
         return rs;
     }else{
-        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+        if(paras.at(0).getType() == paras.at(1).getType() && paras.at(0).getType() == Var::Number){
                 double va = paras.at(0).getNumberValue();
                 double vb = paras.at(1).getNumberValue();
                 Var rs(va<vb);
@@ -536,7 +536,7 @@ Var GreaterEqual(ParameterList paras){
         Var rs = msg;
         return rs;
     }else{
-        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+        if(paras.at(0).getType() == paras.at(1).getType() && paras.at(0).getType() == Var::Number){
                 double va = paras.at(0).getNumberValue();
                 double vb = paras.at(1).getNumberValue();
                 Var rs(va>=vb);
@@ -555,7 +555,7 @@ Var LessEqual(ParameterList paras){
         Var rs = msg;
         return rs;
     }else{
-        if(paras.at(0).type == paras.at(1).type && paras.at(0).type == Var::Number){
+        if(paras.at(0).getType() == paras.at(1).getType() && paras.at(0).getType() == Var::Number){
                 double va = paras.at(0).getNumberValue();
                 double vb = paras.at(1).getNumberValue();
                 Var rs(va <= vb);
@@ -578,7 +578,7 @@ Var NOT(ParameterList paras){
         return rs;
     }
 
-    if(paras.at(0).type == Var::Bool){
+    if(paras.at(0).getType() == Var::Bool){
             bool bv = paras.at(0).getNumberValue();
             Var rs(!bv);
             return rs;
@@ -597,7 +597,7 @@ Var AND(ParameterList paras){
         return rs;
     }
 
-    if(paras.at(0).type == Var::Bool && paras.at(1).type == Var::Bool){
+    if(paras.at(0).getType() == Var::Bool && paras.at(1).getType() == Var::Bool){
             bool va = paras.at(0).getNumberValue();
             bool vb = paras.at(1).getNumberValue();
             Var rs(va && vb);
@@ -616,7 +616,7 @@ Var OR(ParameterList paras){
         return rs;
     }
 
-    if(paras.at(0).type == Var::Bool && paras.at(1).type == Var::Bool){
+    if(paras.at(0).getType() == Var::Bool && paras.at(1).getType() == Var::Bool){
             bool va = paras.at(0).getNumberValue();
             bool vb = paras.at(1).getNumberValue();
             Var rs(va || vb);

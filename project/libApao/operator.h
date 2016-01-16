@@ -12,20 +12,20 @@ using namespace std;
 typedef vector<Quantity> ParameterList;
 
 //define the Func type, which is a function pointer.
-typedef Quantity(* Func)(ParameterList);
+typedef Quantity(* OpFunc)(ParameterList);
 
 
-Quantity nullfunc(ParameterList paras);
+Quantity nulloperator(ParameterList paras);
 
 Quantity if_then_else(ParameterList paras);
 
 class Operator
 {
     string name;
-    Func func;
+    OpFunc func;
 public:
     Operator();
-    Operator(string opName, Func f);
+    Operator(string opName, OpFunc f);
     Quantity evaluate(ParameterList paras);
     bool isSameName(string &fn);
     string getName();
@@ -36,7 +36,7 @@ ostream& operator << (ostream& output,Operator& o);
 
 typedef Operator OP;
 
-bool RegisterOp(string name, Func func);
+bool RegisterOp(string name, OpFunc func);
 OP* GetOperator(string name);
 
 Var Eval(string name, ParameterList paras);
